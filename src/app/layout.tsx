@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Ollama-NSR',
-  description: 'Manage and interact with local Ollama models.',
+  title: 'NSR LLMs',
+  description: 'Manage and interact with local models.',
 };
 
 export default function RootLayout({

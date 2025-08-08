@@ -19,7 +19,7 @@ export function ModelSidebar({ models, selectedModel, onSelectModel, onModelActi
       <div className="p-4">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Bot className="text-primary" />
-          Ollama-NSR
+          NSR LLMs
         </h1>
         <p className="text-sm text-muted-foreground mt-1">Your local model manager</p>
       </div>

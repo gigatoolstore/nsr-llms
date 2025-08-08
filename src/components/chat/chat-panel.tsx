@@ -31,7 +31,7 @@ export function ChatPanel({ model, messages, onSendMessage, isLoading, onMenuCli
           </Button>
         </div>
         <Bot size={64} className="text-muted-foreground" />
-        <h2 className="mt-6 text-2xl font-semibold">Welcome to Ollama-NSR</h2>
+        <h2 className="mt-6 text-2xl font-semibold">Welcome to NSR LLMs</h2>
         <p className="mt-2 text-muted-foreground">Select a model from the sidebar to begin chatting.</p>
       </div>
     );

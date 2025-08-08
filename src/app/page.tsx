@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -57,6 +58,7 @@ export default function Home() {
     setMessages(prev => [...prev, assistantMessage]);
 
     try {
+      // Note: We pass `newMessages` here to include the user's latest message in the history.
       const response = await chat({
         model: selectedModel.id,
         messages: newMessages.map(m => ({

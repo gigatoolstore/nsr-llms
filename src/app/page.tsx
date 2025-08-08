@@ -47,12 +47,14 @@ export default function Home() {
 
     const userMessage: ChatMessage = { id: `msg-${Date.now()}`, role: 'user', content };
     const newMessages = [...messages, userMessage];
+    
+    setMessages(newMessages);
+    setIsLoading(true);
 
     const assistantMessageId = `msg-${Date.now() + 1}`;
     const assistantMessage: ChatMessage = { id: assistantMessageId, role: 'assistant', content: '', isStreaming: true };
     
-    setMessages(prev => [...prev, userMessage, assistantMessage]);
-    setIsLoading(true);
+    setMessages(prev => [...prev, assistantMessage]);
 
     try {
       const response = await chat({

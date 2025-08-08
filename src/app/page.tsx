@@ -46,7 +46,7 @@ export default function Home() {
     if (!selectedModel) return;
 
     const userMessage: ChatMessage = { id: `msg-${Date.now()}`, role: 'user', content };
-    const allMessages: ChatMessage[] = [...messages, userMessage];
+    const newMessages = [...messages, userMessage];
 
     const assistantMessageId = `msg-${Date.now() + 1}`;
     const assistantMessage: ChatMessage = { id: assistantMessageId, role: 'assistant', content: '', isStreaming: true };
@@ -57,7 +57,7 @@ export default function Home() {
     try {
       const response = await chat({
         model: selectedModel.id,
-        messages: allMessages.map(m => ({
+        messages: newMessages.map(m => ({
           role: m.role,
           content: [{ text: m.content }],
         })),

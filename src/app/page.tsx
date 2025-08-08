@@ -5,10 +5,10 @@ import type { OllamaModel, ChatMessage } from "@/lib/types";
 import { ModelSidebar } from "@/components/model-sidebar";
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { formatResponseAsMarkdown } from "@/ai/flows/format-response-as-markdown";
+import { chat } from "@/ai/flows/chat";
 
 const MOCK_MODELS: OllamaModel[] = [
-  { id: 'llama3', name: 'Llama 3', shortName: 'llama3', description: 'The latest model from Meta', status: 'running' },
+  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', shortName: 'gemini-2.0-flash', description: 'The latest model from Google', status: 'running' },
   { id: 'mistral', name: 'Mistral', shortName: 'mistral', description: 'A powerful and efficient model', status: 'stopped' },
   { id: 'codegemma', name: 'CodeGemma', shortName: 'codegemma', description: 'Optimized for code generation', status: 'stopped' },
 ];
@@ -46,32 +46,43 @@ export default function Home() {
     if (!selectedModel) return;
 
     const userMessage: ChatMessage = { id: `msg-${Date.now()}`, role: 'user', content };
+    const allMessages: ChatMessage[] = [...messages, userMessage];
+
     const assistantMessageId = `msg-${Date.now() + 1}`;
     const assistantMessage: ChatMessage = { id: assistantMessageId, role: 'assistant', content: '', isStreaming: true };
     
     setMessages(prev => [...prev, userMessage, assistantMessage]);
     setIsLoading(true);
 
-    // --- Mock AI Response ---
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network latency & generation time
-    const mockResponse = `This is a mock response from the **${selectedModel.name}** model. You asked: *"${content}"*. Local models like this are great for privacy and offline use. Here are some points:
-- They run on your machine.
-- No data leaves your device.
-- They are fast and efficient.
-\`\`\`javascript
-console.log("Hello from ${selectedModel.name}!");
-\`\`\``;
-    
-    const formattedResponse = await formatResponseAsMarkdown({ text: mockResponse });
+    try {
+      const response = await chat({
+        model: selectedModel.id,
+        messages: allMessages.map(m => ({
+          role: m.role,
+          content: [{ text: m.content }],
+        })),
+        temperature: 0.7,
+      });
 
-    setMessages(prev =>
-      prev.map(msg =>
-        msg.id === assistantMessageId
-          ? { ...msg, content: formattedResponse.markdown, isStreaming: false }
-          : msg
-      )
-    );
-    setIsLoading(false);
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: response.reply, isStreaming: false }
+            : msg
+        )
+      );
+    } catch (error) {
+      console.error("Failed to get response from AI:", error);
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === assistantMessageId
+            ? { ...msg, content: "Sorry, I encountered an error.", isStreaming: false }
+            : msg
+        )
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
